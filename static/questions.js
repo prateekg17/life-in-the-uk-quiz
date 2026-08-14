@@ -350,7 +350,7 @@ const QUESTIONS = [
   { section: "Parliament & Elections", q: "How is the Speaker of the House of Commons chosen?", options: ["Appointed directly by the monarch", "Elected by fellow MPs in a secret ballot", "Nominated solely by the Prime Minister", "Selected by a vote in the House of Lords"], answer: 1 },
   { section: "Parliament & Elections", q: "Under the UK's 'first past the post' electoral system, how does a candidate win a constituency seat?", options: ["By winning more than 50% of the vote", "By getting the most votes of any candidate, regardless of the overall share", "Through a run-off between the top two candidates", "Through proportional allocation based on national vote share"], answer: 1 },
   { section: "Parliament & Elections", q: "At minimum, how often must a UK General Election be held?", options: ["Every year", "Every three years", "Every five years", "Every ten years"], answer: 2 },
-  { section: "Parliament & Elections", q: "What is a 'byelection'?", options: ["An election held only in Scotland", "A one-off election held in a constituency when its MP dies or resigns mid-term", "An election for local mayors only", "A repeat vote held after a tied result"], answer: 1 },
+  { section: "Parliament & Elections", q: "What is a 'by-election'?", options: ["An election held only in Scotland", "A one-off election held in a constituency when its MP dies or resigns mid-term", "An election for local mayors only", "A repeat vote held after a tied result"], answer: 1 },
 
   // --- GOVERNMENT & POLITICS ---
   { section: "Government & Politics", q: "Where is the Prime Minister's official residence in central London?", options: ["Buckingham Palace", "10 Downing Street", "Chequers", "Windsor Castle"], answer: 1 },
