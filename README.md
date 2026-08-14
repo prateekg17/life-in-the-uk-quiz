@@ -6,9 +6,10 @@ instant feedback with your score.
 
 ## Features
 
-- 270 questions across 29 topic sections (Geography, Roman/Anglo-Saxon/Viking/Norman history,
+- 308 questions across 35 topic sections (Geography, Roman/Anglo-Saxon/Viking/Norman history,
   Tudors & Stuarts, the Union Flag, Victorian era, Voting & Reform, both World Wars, Devolved
-  Administrations, Courts & Legal System, Arts & Culture, and more)
+  Administrations, Courts & Legal System, Arts & Culture, the Monarchy & Constitution,
+  Parliament & Elections, International Institutions, Policing & the Law, and more)
 - Take a single section or the full quiz
 - Instant marking on submission, with correct answers highlighted
 - Score summary as a count and percentage
