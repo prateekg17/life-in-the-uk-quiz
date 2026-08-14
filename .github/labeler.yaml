@@ -1,0 +1,16 @@
+# Add 'enhancement' label to any PR where the head branch name starts with `feature` or has a `feature` section in the name
+enhancement:
+  - head-branch: [ '^feature', 'feature', 'feat' ]
+
+# Add 'bug' label to any PR that is opened from a 'bug', `bugfix`, 'hotfix', 'fix' branch
+bug:
+  - head-branch: [ 'bug', 'bugfix', 'hotfix', 'fix' ]
+
+# Add 'configuration' label to any PR that is opened from a 'config', `configuration` branch
+configuration:
+  - head-branch: [ 'config', 'configuration' ]
+
+# Add 'documentation' label to any changes within 'docs' folder or any subfolders or to .md files within the entire repository
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: [ 'docs/**', '**/*.md' ]

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Life in the UK Quiz</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f4f4f4; color: #333; line-height: 1.6; }
+    header { background: #003366; color: white; padding: 24px 20px; text-align: center; }
+    header h1 { font-size: 1.9em; }
+    header p { font-size: 0.95em; margin-top: 6px; opacity: 0.85; }
+    main { max-width: 900px; margin: 30px auto; padding: 0 16px 60px; }
+
+    /* ---- HOME PAGE ---- */
+    #home-page { display: block; }
+    .home-intro { text-align: center; margin-bottom: 28px; }
+    .home-intro p { color: #555; margin-top: 8px; }
+    .all-btn { display: inline-block; margin-top: 14px; padding: 12px 32px; background: #003366; color: white; border: none; border-radius: 6px; font-size: 1em; cursor: pointer; text-decoration: none; }
+    .all-btn:hover { background: #00509e; }
+    .sections-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .section-card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 16px 18px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+    .section-card:hover { border-color: #003366; box-shadow: 0 2px 8px rgba(0,51,102,0.12); }
+    .section-card h3 { font-size: 1em; color: #003366; }
+    .section-card span { font-size: 0.82em; color: #888; }
+
+    /* ---- QUIZ PAGE ---- */
+    #quiz-page { display: none; }
+    .quiz-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .back-btn { background: none; border: 1px solid #003366; color: #003366; border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 0.9em; white-space: nowrap; }
+    .back-btn:hover { background: #003366; color: white; }
+    .quiz-title { font-size: 1.3em; font-weight: bold; color: #003366; }
+    .quiz-meta { font-size: 0.88em; color: #888; }
+
+    #score-banner { display: none; background: #003366; color: white; text-align: center; padding: 24px; border-radius: 6px; margin-bottom: 30px; font-size: 1.2em; }
+    #score-banner span { font-size: 2em; font-weight: bold; display: block; margin-top: 8px; }
+
+    .question-block { background: white; border-radius: 6px; padding: 20px; margin-bottom: 18px; border: 1px solid #ddd; }
+    .question-block h3 { font-size: 0.88em; color: #aaa; margin-bottom: 6px; }
+    .question-block p { font-weight: bold; margin-bottom: 12px; }
+    .options label { display: block; padding: 8px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 6px; border: 1px solid #ddd; background: #fafafa; }
+    .options label:hover { background: #eef3ff; }
+    .options input[type="radio"] { margin-right: 10px; }
+    .options label.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+    .options label.incorrect { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+    .options label.reveal-correct { background: #d4edda; border-color: #28a745; color: #155724; }
+    .result-note { margin-top: 10px; font-size: 0.88em; font-style: italic; }
+    .result-note.wrong { color: #dc3545; }
+    .result-note.right { color: #28a745; }
+    .result-note.skipped { color: #856404; }
+
+    #submit-btn { display: block; width: 100%; padding: 16px; font-size: 1.1em; background: #003366; color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+    #submit-btn:hover { background: #00509e; }
+    #submit-btn:disabled { background: #888; cursor: default; }
+
+    footer { text-align: center; padding: 20px 16px 40px; color: #888; font-size: 0.82em; max-width: 900px; margin: 0 auto; }
+    footer a { color: #003366; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Life in the UK - Practice Quiz</h1>
+  <p id="header-sub">Choose a section below or take the full quiz</p>
+</header>
+
+<main>
+
+  <!-- HOME PAGE -->
+  <div id="home-page">
+    <div class="home-intro">
+      <p id="total-count"></p>
+      <button class="all-btn" onclick="startQuiz('__all__')">Take Full Quiz</button>
+    </div>
+    <div class="sections-grid" id="sections-grid"></div>
+  </div>
+
+  <!-- QUIZ PAGE -->
+  <div id="quiz-page">
+    <div class="quiz-header">
+      <button class="back-btn" onclick="showHome()">&#8592; Home</button>
+      <div>
+        <div class="quiz-title" id="quiz-title"></div>
+        <div class="quiz-meta" id="quiz-meta"></div>
+      </div>
+    </div>
+
+    <div id="score-banner">
+      Your Score: <span id="score-text"></span>
+    </div>
+
+    <form id="quiz-form">
+      <div id="questions-container"></div>
+      <button type="submit" id="submit-btn">Submit Answers</button>
+    </form>
+  </div>
+
+</main>
+
+<footer>
+  This is an independent, unofficial study aid and is not affiliated with, endorsed by, or
+  produced by the UK Home Office. Questions are based on publicly available information from the
+  official <em>Life in the UK Test</em> handbook (gov.uk, Crown copyright, Open Government
+  Licence v3.0).
+</footer>
+
+<script src="questions.js"></script>
+<script src="quiz.js"></script>
+</body>
+</html>

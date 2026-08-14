@@ -1,0 +1,16 @@
+name: Pull Request Labeler
+on:
+  pull_request_target:
+
+jobs:
+  label-pull-request:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Pull Request Labeler
+        uses: actions/labeler@v7
+        with:
+          configuration-path: .github/labeler.yaml
