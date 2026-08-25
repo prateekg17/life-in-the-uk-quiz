@@ -10,10 +10,13 @@
   const sections = Object.keys(sectionCounts);
 
   // ---- Fisher-Yates shuffle (returns a new array, does not mutate input) ----
+  // Math.random() is intentionally used here: this only randomizes quiz
+  // question/option order for a study aid and has no security implications,
+  // so a cryptographically secure RNG is not required.
   function shuffle(array) {
     const result = array.slice();
     for (let i = result.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(Math.random() * (i + 1)); // NOSONAR - non-security-sensitive shuffle
       const tmp = result[i];
       result[i] = result[j];
       result[j] = tmp;
@@ -38,6 +41,14 @@
 
   // ---- Show / hide pages ----
   function showHome(fromPopState) {
+    if (!fromPopState && history.state?.view === 'quiz') {
+      // Coming from a quiz view via the in-page Home button - go back in
+      // history so the browser Back button doesn't re-show the quiz.
+      // The popstate handler will perform the UI update; avoid double-rendering.
+      history.back();
+      return;
+    }
+
     window.scrollTo({ top: 0, behavior: 'auto' });
     document.getElementById('home-page').style.display = 'block';
     document.getElementById('quiz-page').style.display = 'none';
@@ -50,13 +61,7 @@
     btn.disabled = false;
 
     if (!fromPopState) {
-      if (history.state && history.state.view === 'quiz') {
-        // Coming from a quiz view via the in-page Home button - go back in
-        // history so the browser Back button doesn't re-show the quiz.
-        history.back();
-      } else {
-        history.replaceState({ view: 'home' }, '', location.pathname + location.search);
-      }
+      history.replaceState({ view: 'home' }, '', location.pathname + location.search);
     }
   }
 
@@ -96,15 +101,26 @@
     }
   };
 
-  // ---- Ensure the initial load is tagged as the home state ----
-  if (!history.state) {
-    history.replaceState({ view: 'home' }, '', location.pathname + location.search);
-  }
+  // ---- Restore view from URL hash on initial load, if valid ----
+  (function restoreInitialView() {
+    if (history.state) return; // already tagged (e.g. bfcache restore)
+
+    const match = /^#section=(.+)$/.exec(location.hash);
+    const section = match && decodeURIComponent(match[1]);
+    const isValidSection = section === '__all__' || sections.includes(section);
+
+    if (isValidSection) {
+      startQuizView(section);
+      history.replaceState({ view: 'quiz', section: section }, '', location.hash);
+    } else {
+      history.replaceState({ view: 'home' }, '', location.pathname + location.search);
+    }
+  })();
 
   // ---- React to browser Back / Forward ----
   window.addEventListener('popstate', function (event) {
     const state = event.state;
-    if (state && state.view === 'quiz' && state.section) {
+    if (state?.view === 'quiz' && state.section) {
       startQuizView(state.section);
     } else {
       showHome(true);
