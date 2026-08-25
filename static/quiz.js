@@ -9,6 +9,18 @@
   });
   const sections = Object.keys(sectionCounts);
 
+  // ---- Fisher-Yates shuffle (returns a new array, does not mutate input) ----
+  function shuffle(array) {
+    const result = array.slice();
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = result[i];
+      result[i] = result[j];
+      result[j] = tmp;
+    }
+    return result;
+  }
+
   // ---- Build home page ----
   document.getElementById('total-count').textContent =
     sections.length + ' sections, ' + QUESTIONS.length + ' questions in total.';
@@ -25,7 +37,8 @@
   });
 
   // ---- Show / hide pages ----
-  function showHome() {
+  function showHome(fromPopState) {
+    window.scrollTo({ top: 0, behavior: 'auto' });
     document.getElementById('home-page').style.display = 'block';
     document.getElementById('quiz-page').style.display = 'none';
     document.getElementById('header-sub').textContent = 'Choose a section below or take the full quiz';
@@ -35,15 +48,28 @@
     const btn = document.getElementById('submit-btn');
     btn.textContent = 'Submit Answers';
     btn.disabled = false;
+
+    if (!fromPopState) {
+      if (history.state && history.state.view === 'quiz') {
+        // Coming from a quiz view via the in-page Home button - go back in
+        // history so the browser Back button doesn't re-show the quiz.
+        history.back();
+      } else {
+        history.replaceState({ view: 'home' }, '', location.pathname + location.search);
+      }
+    }
   }
 
   window.showHome = showHome;
 
   // ---- Start a quiz for a section (or '__all__') ----
-  window.startQuiz = function (section) {
-    const pool = section === '__all__'
-      ? QUESTIONS
-      : QUESTIONS.filter(function (q) { return q.section === section; });
+  function startQuizView(section) {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    const pool = shuffle(
+      section === '__all__'
+        ? QUESTIONS
+        : QUESTIONS.filter(function (q) { return q.section === section; })
+    );
 
     document.getElementById('home-page').style.display = 'none';
     document.getElementById('quiz-page').style.display = 'block';
@@ -60,7 +86,30 @@
     btn.disabled = false;
 
     renderQuestions(pool);
+  }
+
+  window.startQuiz = function (section, fromPopState) {
+    startQuizView(section);
+
+    if (!fromPopState) {
+      history.pushState({ view: 'quiz', section: section }, '', '#section=' + encodeURIComponent(section));
+    }
   };
+
+  // ---- Ensure the initial load is tagged as the home state ----
+  if (!history.state) {
+    history.replaceState({ view: 'home' }, '', location.pathname + location.search);
+  }
+
+  // ---- React to browser Back / Forward ----
+  window.addEventListener('popstate', function (event) {
+    const state = event.state;
+    if (state && state.view === 'quiz' && state.section) {
+      startQuizView(state.section);
+    } else {
+      showHome(true);
+    }
+  });
 
   // ---- Render questions into the form ----
   function renderQuestions(pool) {
@@ -72,7 +121,6 @@
 
       const block = document.createElement('div');
       block.className = 'question-block';
-      block.dataset.answer = q.answer;
 
       const label = document.createElement('h3');
       label.textContent = 'Q' + num + ' - ' + q.section;
@@ -85,14 +133,19 @@
       const optionsDiv = document.createElement('div');
       optionsDiv.className = 'options';
 
-      q.options.forEach(function (opt, oi) {
+      // Shuffle the option order and remap the correct answer index
+      // so it still points to the right option after reordering.
+      const order = shuffle(q.options.map(function (_, i) { return i; }));
+      block.dataset.answer = order.indexOf(q.answer);
+
+      order.forEach(function (originalIdx, oi) {
         const lbl = document.createElement('label');
         const inp = document.createElement('input');
         inp.type = 'radio';
         inp.name = 'q' + num;
         inp.value = oi;
         lbl.appendChild(inp);
-        lbl.appendChild(document.createTextNode(' ' + opt));
+        lbl.appendChild(document.createTextNode(' ' + q.options[originalIdx]));
         optionsDiv.appendChild(lbl);
       });
 
@@ -153,6 +206,15 @@
 
     document.getElementById('submit-btn').textContent = 'Submitted';
     document.getElementById('submit-btn').disabled = true;
+  });
+
+  // ---- Back to top button ----
+  const backToTopBtn = document.getElementById('back-to-top');
+  window.addEventListener('scroll', function () {
+    backToTopBtn.classList.toggle('visible', window.scrollY > 300);
+  });
+  backToTopBtn.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
 })();
